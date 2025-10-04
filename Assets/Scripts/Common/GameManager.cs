@@ -1,23 +1,23 @@
+
 using UnityEngine;
-
-public class GameManager : MonoBehaviour
+namespace Common
 {
-    public static GameManager Instance;
-
-    public int playerHP;
-    public int money;
-    public string[] party;
-
-    void Awake()
+    public class GameManager : MonoBehaviour
     {
-        if (Instance == null)
+        public static GameManager Instance;
+        public string[] json;
+
+        void Awake()
         {
-            Instance = this;
-            DontDestroyOnLoad(gameObject);
-        }
-        else
-        {
-            Destroy(gameObject);
+            if (Instance == null)
+            {
+                Instance = this;
+                DontDestroyOnLoad(gameObject);
+            }
+            else
+            {
+                Destroy(gameObject);
+            }
         }
     }
 }

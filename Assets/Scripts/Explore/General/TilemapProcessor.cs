@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
-public class TilemapProcessor
+public class TilemapProcessor : MonoBehaviour
 {
     [SerializeField] private TileBase outerWallTile;
     [SerializeField] private TileBase innerWallTile;

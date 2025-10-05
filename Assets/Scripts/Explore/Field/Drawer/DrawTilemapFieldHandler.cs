@@ -9,6 +9,14 @@ public class DrawTileMapHandler : MonoBehaviour, IDrawFieldHandler
     [SerializeField] private TileBase innerWallTile;
     [SerializeField] private TileBase obstacleTile;
     private int[,] mapData;
+    [SerializeField] private MonoBehaviour processorComponent;
+    [SerializeField] private MonoBehaviour obstacleHandlerComponent;
+    private TilemapProcessor processor;
+
+    void Awake()
+    {
+        processor = processorComponent as TilemapProcessor;
+    }
 
     public void Draw()
     {
@@ -55,7 +63,6 @@ public class DrawTileMapHandler : MonoBehaviour, IDrawFieldHandler
         int cols = mapData.GetLength(1);
         int xAdjust = -cols / 2;
         int yAdjust = rows / 2 - 1;
-        var processor = new TilemapProcessor();
         for (int y = 0; y < rows; y++)
         {
             for (int x = 0; x < cols; x++)

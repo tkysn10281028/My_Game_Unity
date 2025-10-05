@@ -6,13 +6,15 @@ namespace Explore.Player
     public class PlayerMove : MonoBehaviour
     {
         [SerializeField] private float moveSpeed = 30f;
+        [SerializeField] private MonoBehaviour inputHandlerComponent;
+        [SerializeField] private MonoBehaviour obstacleHandlerComponent;
         private IPlayerMoveInputHandler inputHandler;
         private IPlayerObstacleHandler obstacleHandler;
 
         void Awake()
         {
-            inputHandler = GetComponent<IPlayerMoveInputHandler>();
-            obstacleHandler = GetComponent<IPlayerObstacleHandler>();
+            inputHandler = inputHandlerComponent as IPlayerMoveInputHandler;
+            obstacleHandler = obstacleHandlerComponent as IPlayerObstacleHandler;
         }
 
         void Start()

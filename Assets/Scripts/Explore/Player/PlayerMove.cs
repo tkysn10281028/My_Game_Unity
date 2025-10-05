@@ -20,13 +20,13 @@ namespace Explore.Player
         void Start()
         {
             this.UpdateAsObservable()
-                .Subscribe(_ =>
+                .Subscribe(async _ =>
                 {
                     Vector3 moveDirection = inputHandler.GetPlayerMoveVector();
                     if (moveDirection == Vector3.zero) return;
                     var origin = transform.position;
                     var distance = moveSpeed * Time.deltaTime;
-                    transform.position = obstacleHandler.CheckObstacle(origin, origin + moveDirection * distance);
+                    transform.position = await obstacleHandler.CheckObstacle(origin, origin + moveDirection * distance);
                     float angle = Mathf.Atan2(moveDirection.y, moveDirection.x) * Mathf.Rad2Deg;
                     transform.rotation = Quaternion.Euler(0, 0, angle - 90f);
                 })

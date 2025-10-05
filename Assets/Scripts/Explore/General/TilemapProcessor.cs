@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
@@ -5,22 +6,43 @@ public class TilemapProcessor : MonoBehaviour
 {
     [SerializeField] private TileBase outerWallTile;
     [SerializeField] private TileBase innerWallTile;
-    [SerializeField] private TileBase obstacleTile;
-    public void setTile(int cellValue, Vector3Int cellPos, Tilemap tilemap)
+    [SerializeField] private TileBase floorTile;
+    public void SetTile(int cellValue, Vector3Int cellPos, Tilemap tilemap)
     {
         switch (cellValue)
         {
             case 1:
                 tilemap.SetTile(cellPos, outerWallTile);
                 break;
-
             case 2:
                 tilemap.SetTile(cellPos, innerWallTile);
                 break;
-
             case 0:
-                tilemap.SetTile(cellPos, obstacleTile);
+                tilemap.SetTile(cellPos, floorTile);
                 break;
         }
+    }
+
+    public async Task<Vector3> ProcessAndReturnPosition(Vector3 origin, Vector3 target, int cellValue)
+    {
+        switch (cellValue)
+        {
+            case 1:
+                return origin;
+            case 2:
+                return origin;
+            case 0:
+                return target;
+            default:
+                await CallApiForSpecialCell(cellValue);
+                return target;
+        }
+    }
+
+    private async Task CallApiForSpecialCell(int cellValue)
+    {
+        Debug.Log($"API通信中: cellValue={cellValue}");
+        await Task.Delay(1000);
+        Debug.Log("API通信完了");
     }
 }

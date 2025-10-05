@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
@@ -5,13 +6,20 @@ public class PlayerTilemapObstacleHandler : MonoBehaviour, IPlayerObstacleHandle
 {
     [SerializeField] private Tilemap tilemap;
     private int[,] mapData;
+    [SerializeField] private MonoBehaviour processorComponent;
+    private TilemapProcessor processor;
+    void Awake()
+    {
+        processor = processorComponent as TilemapProcessor;
+    }
 
     public void Init(int[,] mapData)
     {
+        Debug.Log("aaa");
         this.mapData = mapData;
     }
 
-    public Vector3 CheckObstacle(Vector3 origin, Vector3 target)
+    public async Task<Vector3> CheckObstacle(Vector3 origin, Vector3 target)
     {
         // 処理内容の判定のため移動先のセル座標を取得
         Vector3Int cellPos = tilemap.WorldToCell(target);
@@ -20,18 +28,7 @@ public class PlayerTilemapObstacleHandler : MonoBehaviour, IPlayerObstacleHandle
         int x = cellPos.x + cols / 2;
         int y = -(cellPos.y - (rows / 2 - 1));
         if (x < 0 || x >= cols || y < 0 || y >= rows) return origin;
-
         int cellValue = mapData[y, x];
-        switch (cellValue)
-        {
-            case 1:
-                return origin;
-            case 2:
-                Debug.Log("障害物に当たった！追加処理");
-                return origin;
-            case 0:
-            default:
-                return target;
-        }
+        return await processor.ProcessAndReturnPosition(origin, target, cellValue);
     }
 }

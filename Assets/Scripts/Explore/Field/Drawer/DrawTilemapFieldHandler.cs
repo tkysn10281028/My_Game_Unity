@@ -5,24 +5,20 @@ using UnityEngine.Tilemaps;
 public class DrawTileMapHandler : MonoBehaviour, IDrawFieldHandler
 {
     [SerializeField] private Tilemap tilemap;
-    [SerializeField] private TileBase outerWallTile;
-    [SerializeField] private TileBase innerWallTile;
-    [SerializeField] private TileBase obstacleTile;
     private int[,] mapData;
-    [SerializeField] private MonoBehaviour processorComponent;
     [SerializeField] private MonoBehaviour obstacleHandlerComponent;
+    private PlayerTilemapObstacleHandler obstacleHandler;
+    [SerializeField] private MonoBehaviour processorComponent;
     private TilemapProcessor processor;
-
     void Awake()
     {
         processor = processorComponent as TilemapProcessor;
+        obstacleHandler = obstacleHandlerComponent as PlayerTilemapObstacleHandler;
     }
-
     public void Draw()
     {
         LoadFieldFromCSV("map.csv");
         DrawField();
-        var obstacleHandler = FindFirstObjectByType<PlayerTilemapObstacleHandler>();
         obstacleHandler.Init(mapData);
     }
 
@@ -67,7 +63,7 @@ public class DrawTileMapHandler : MonoBehaviour, IDrawFieldHandler
         {
             for (int x = 0; x < cols; x++)
             {
-                processor.setTile(mapData[y, x], new Vector3Int(x + xAdjust, -y + yAdjust, 0), tilemap);
+                processor.SetTile(mapData[y, x], new Vector3Int(x + xAdjust, -y + yAdjust, 0), tilemap);
             }
         }
     }

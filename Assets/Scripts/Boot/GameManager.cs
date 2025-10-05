@@ -1,6 +1,6 @@
 
 using UnityEngine;
-namespace Common
+namespace Boot
 {
     public class GameManager : MonoBehaviour
     {

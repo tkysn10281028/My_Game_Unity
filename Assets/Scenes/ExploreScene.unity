@@ -514,7 +514,7 @@ GameObject:
   - component: {fileID: 1203043616}
   - component: {fileID: 1203043615}
   m_Layer: 0
-  m_Name: MapGrid
+  m_Name: 3 * 3 MapGrid
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -649,6 +649,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1532504628}
+  - component: {fileID: 1532504629}
   m_Layer: 0
   m_Name: Map
   m_TagString: Untagged
@@ -672,6 +673,24 @@ Transform:
   - {fileID: 1203043616}
   m_Father: {fileID: 519420032}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1532504629
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1532504627}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd5abc6a6039b43768ba13a819cf2f93, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tilemap: {fileID: 1579238983}
+  mapTile: {fileID: 11400000, guid: 28b369350c8bd461ca8f08ba82f4f4a5, type: 2}
+  mapObject: {fileID: 3229402654659213163, guid: 8529340026910416c8a4f911fec78466, type: 3}
+  mapParent: {fileID: 1532504628}
+  gridWidth: 3
+  gridHeight: 3
 --- !u!1 &1570412069
 GameObject:
   m_ObjectHideFlags: 0
@@ -730,7 +749,7 @@ GameObject:
   - component: {fileID: 1579238983}
   - component: {fileID: 1579238982}
   m_Layer: 0
-  m_Name: MapTilemap
+  m_Name: 3 * 3 MapTilemap
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -794,7 +813,7 @@ TilemapRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 2
+  m_SortingOrder: 1
   m_ChunkSize: {x: 32, y: 32, z: 32}
   m_ChunkCullingBounds: {x: 0, y: 0, z: 0}
   m_MaxChunkCount: 16

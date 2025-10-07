@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using Boot;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
@@ -17,6 +18,9 @@ public class TilemapProcessor : MonoBehaviour
             case 2:
                 tilemap.SetTile(cellPos, innerWallTile);
                 break;
+            case 3:
+                tilemap.SetTile(cellPos, innerWallTile);
+                break;
             case 0:
                 tilemap.SetTile(cellPos, floorTile);
                 break;
@@ -31,18 +35,13 @@ public class TilemapProcessor : MonoBehaviour
                 return origin;
             case 2:
                 return origin;
+            case 3:
+                // TODO: ここでダイアログを出す
+                return origin;
             case 0:
                 return target;
             default:
-                await CallApiForSpecialCell(cellValue);
                 return target;
         }
-    }
-
-    private async Task CallApiForSpecialCell(int cellValue)
-    {
-        Debug.Log($"API通信中: cellValue={cellValue}");
-        await Task.Delay(1000);
-        Debug.Log("API通信完了");
     }
 }

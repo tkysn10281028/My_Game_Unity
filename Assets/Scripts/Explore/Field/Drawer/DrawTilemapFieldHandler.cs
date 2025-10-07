@@ -17,6 +17,7 @@ public class DrawTileMapHandler : MonoBehaviour, IDrawFieldHandler
     }
     public void Draw()
     {
+        // TODO:ここでリモートからファイル名の指示を受けて読み込みを行う
         LoadFieldFromCSV("map.csv");
         DrawField();
         obstacleHandler.Init(mapData);
@@ -24,10 +25,11 @@ public class DrawTileMapHandler : MonoBehaviour, IDrawFieldHandler
 
     private void LoadFieldFromCSV(string fileName)
     {
+        // TODO:ここはS3のパスに置き換える。もしくはBootScene上でファイルを全てS3からダウンロードするなら変更なし
         string path = Path.Combine(Application.streamingAssetsPath, fileName);
         if (!File.Exists(path))
         {
-            Debug.LogError("CSV file not found at " + path);
+            Debug.LogError("CSV file not found : " + fileName);
             return;
         }
         string[] lines = File.ReadAllLines(path);
@@ -47,7 +49,6 @@ public class DrawTileMapHandler : MonoBehaviour, IDrawFieldHandler
                 }
                 else
                 {
-                    Debug.LogWarning($"Invalid value at ({y},{x}) in CSV.");
                     mapData[y, x] = 0;
                 }
             }

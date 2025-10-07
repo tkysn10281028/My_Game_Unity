@@ -1,11 +1,13 @@
 
+using System.Collections.Generic;
 using UnityEngine;
 namespace Boot
 {
     public class GameManager : MonoBehaviour
     {
         public static GameManager Instance;
-        public string[] json;
+        public List<MapObject> mapObjectList;
+        public bool IsPlayerLocked { get; private set; }
 
         void Awake()
         {
@@ -18,6 +20,15 @@ namespace Boot
             {
                 Destroy(gameObject);
             }
+        }
+        public void LockPlayer()
+        {
+            IsPlayerLocked = true;
+        }
+
+        public void UnlockPlayer()
+        {
+            IsPlayerLocked = false;
         }
     }
 }

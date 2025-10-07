@@ -687,7 +687,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tilemap: {fileID: 1579238983}
   mapTile: {fileID: 11400000, guid: 28b369350c8bd461ca8f08ba82f4f4a5, type: 2}
-  mapObject: {fileID: 3229402654659213163, guid: 8529340026910416c8a4f911fec78466, type: 3}
+  mapTileYellow: {fileID: 11400000, guid: e40ffb41127d9403f8ffe63ebbce0ed5, type: 2}
+  mapTileGreen: {fileID: 11400000, guid: 7d94a99487252490fb8bc4face26841b, type: 2}
+  playerYellow: {fileID: 3229402654659213163, guid: 8529340026910416c8a4f911fec78466, type: 3}
+  playerGreen: {fileID: 3229402654659213163, guid: 7b30db8eb066a4717964e0bcfbe5da96, type: 3}
+  regist: {fileID: 3229402654659213163, guid: 5de2a181de0a947c6add29ee8994020f, type: 3}
+  lockYellow: {fileID: 3229402654659213163, guid: 2f35a5569e5ec4de992ecf799b10fd63, type: 3}
+  lockGreen: {fileID: 3229402654659213163, guid: bf056f3de86584237b3c543193be06db, type: 3}
+  virus: {fileID: 3229402654659213163, guid: 467d535ff3e114f5e9ebc877cfee8236, type: 3}
   mapParent: {fileID: 1532504628}
   gridWidth: 3
   gridHeight: 3

@@ -34,9 +34,13 @@ public class TilemapProcessor : MonoBehaviour
             case 1:
                 return origin;
             case 2:
+                GameManager.Instance.LockPlayer();
+                DialogSystem.Show("テスト");
                 return origin;
             case 3:
                 // TODO: ここでダイアログを出す
+                GameManager.Instance.LockPlayer();
+                DialogSystem.Show("テスト");
                 return origin;
             case 0:
                 return target;

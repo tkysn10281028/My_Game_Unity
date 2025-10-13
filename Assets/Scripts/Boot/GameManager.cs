@@ -7,6 +7,7 @@ namespace Boot
     {
         public static GameManager Instance;
         public List<MapObject> mapObjectList;
+        public List<StatusObject> statusObjectList;
         public bool IsPlayerLocked { get; private set; }
 
         void Awake()

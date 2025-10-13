@@ -94,7 +94,7 @@ public class MapDrawer : MonoBehaviour
             new(0, 0, 1, "virus", false),
         };
         GameManager.Instance.mapObjectList = data;
-        DrawMapObject(data);
+        DrawMapObject();
     }
 
     private void DrawMap()
@@ -110,8 +110,9 @@ public class MapDrawer : MonoBehaviour
             }
         }
     }
-    private void DrawMapObject(List<MapObject> data)
+    public void DrawMapObject()
     {
+        var data = GameManager.Instance.mapObjectList;
         var xAdjustment = 8;
         var yAdjustment = -3;
         foreach (var item in data)

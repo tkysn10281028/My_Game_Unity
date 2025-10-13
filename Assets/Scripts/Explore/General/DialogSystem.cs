@@ -1,109 +1,164 @@
 using UnityEngine;
+using System;
+using System.Linq;
+using UniRx;
 using TMPro;
-using System.Collections;
-using UnityEngine.UI;
+using System.Collections.Generic;
+using Boot;
 
 public class DialogSystem : MonoBehaviour
 {
     private static DialogSystem instance;
+    private DialogView view;
 
-    private Canvas canvas;
-    private GameObject panel;
-    private TMP_Text textArea;
-    private Coroutine typingCoroutine;
+    private readonly float charInterval = 0.05f;
+    private readonly float messageInterval = 0f;
+    private bool isShowing = false;
+    private int currentChoiceIndex = 0;
 
-    private float charInterval = 0.03f;
+    // --- 購読管理 ---
+    private readonly CompositeDisposable disposables = new();
 
     void Awake()
     {
-        if (instance == null)
-        {
-            instance = this;
-            DontDestroyOnLoad(gameObject);
-            CreateDialogUI();
-        }
-        else
-        {
-            Destroy(gameObject);
-        }
+        instance = this;
+        DontDestroyOnLoad(gameObject);
     }
 
-    private void CreateDialogUI()
+    void Start()
     {
-        // Canvas
-        var canvasObj = new GameObject("DialogCanvas");
-        canvas = canvasObj.AddComponent<Canvas>();
-        canvas.renderMode = RenderMode.ScreenSpaceOverlay;
-        canvasObj.AddComponent<CanvasScaler>();
-        canvasObj.AddComponent<GraphicRaycaster>();
-
-        DontDestroyOnLoad(canvasObj);
-
-        // Panel (background)
-        panel = new GameObject("DialogPanel");
-        panel.transform.SetParent(canvas.transform, false);
-
-        var panelRect = panel.AddComponent<RectTransform>();
-        panelRect.anchorMin = new Vector2(0, 0);
-        panelRect.anchorMax = new Vector2(1, 0.25f);
-        panelRect.offsetMin = Vector2.zero;
-        panelRect.offsetMax = Vector2.zero;
-
-        var bg = panel.AddComponent<Image>();
-        bg.color = new Color(0, 0, 0, 0.7f);
-
-        // Text
-        var textObj = new GameObject("DialogText");
-        textObj.transform.SetParent(panel.transform, false);
-
-        textArea = textObj.AddComponent<TextMeshProUGUI>();
-        var textRect = textObj.GetComponent<RectTransform>();
-        textRect.anchorMin = new Vector2(0.05f, 0.05f);
-        textRect.anchorMax = new Vector2(0.95f, 0.95f);
-        textRect.offsetMin = Vector2.zero;
-        textRect.offsetMax = Vector2.zero;
-
-        textArea.fontSize = 32;
-        textArea.color = Color.white;
-        textArea.text = "";
-        textArea.font = Resources.Load<TMP_FontAsset>("Fonts/ヒラギノ角ゴシック W3 SDF");
+        view = new GameObject("DialogView").AddComponent<DialogView>();
+        view.Initialize();
     }
 
-    // 公開メソッド
-    public static void Show(string message)
+    private void CleanupSubscriptions()
     {
-        if (instance == null)
-        {
-            var go = new GameObject("DialogSystem");
-            instance = go.AddComponent<DialogSystem>();
-        }
-
-        instance.ShowInternal(message);
+        disposables.Clear();
     }
 
-    private void ShowInternal(string message)
+    public static void ShowAsync(params string[] messages)
     {
-        panel.SetActive(true);
-
-        if (typingCoroutine != null)
-            StopCoroutine(typingCoroutine);
-
-        typingCoroutine = StartCoroutine(TypeText(message));
+        GameManager.Instance.LockPlayer();
+        instance.ShowAsyncCore(messages, null);
     }
 
-    public static void Hide()
+    public static void ShowAsync(Action onCompleted, params string[] messages)
     {
-        if (instance != null)
-            instance.panel.SetActive(false);
+        GameManager.Instance.LockPlayer();
+        instance.ShowAsyncCore(messages, onCompleted);
     }
 
-    private IEnumerator TypeText(string message)
+    private void ShowAsyncCore(IEnumerable<string> messages, Action onCompleted)
     {
-        textArea.text = "";
-        foreach (char c in message)
-        {
-            textArea.text += c;
-            yield return new WaitForSeconds(charInterval);
-        }
+        if (isShowing)
+            return;
+
+        isShowing = true;
+        CleanupSubscriptions();
+        view.Panel.SetActive(true);
+
+        messages
+            .Select(message =>
+                Observable.Defer(() =>
+                    Observable.Return(message)
+                        .Do(m => TypeTextObservable(m))
+                        .SelectMany(_ => WaitForKeyDown(KeyCode.Space))
+                        .Concat(Observable.Timer(TimeSpan.FromSeconds(messageInterval)).AsUnitObservable())
+                )
+            )
+            .Concat()
+            .Subscribe(
+                _ => { },
+                () =>
+                {
+                    view.Panel.SetActive(false);
+                    GameManager.Instance.UnlockPlayer();
+                    isShowing = false;
+                    onCompleted?.Invoke();
+                }
+            )
+            .AddTo(disposables);
+    }
+
+    public static void ShowWithChoices(Action onCompleted, string message, string[] choices, Action<int> onSelected)
+    {
+        GameManager.Instance.LockPlayer();
+        instance.ShowChoiceAsync(message, choices, onSelected, onCompleted);
+    }
+
+    public static void ShowWithChoices(string message, string[] choices, Action<int> onSelected)
+    {
+        GameManager.Instance.LockPlayer();
+        instance.ShowChoiceAsync(message, choices, onSelected, null);
+    }
+
+    private void ShowChoiceAsync(string message, string[] choices, Action<int> onSelected, Action onCompleted)
+    {
+        if (isShowing)
+            return;
+
+        isShowing = true;
+        CleanupSubscriptions();
+
+        view.Panel.SetActive(true);
+        view.ChoiceContainer.SetActive(true);
+
+        TypeTextObservable(message);
+        view.CreateChoices(choices, view.TextArea.font);
+
+        Observable.EveryUpdate()
+            .Subscribe(_ =>
+            {
+                if (Input.GetKeyDown(KeyCode.LeftArrow)) MoveChoice(-1);
+                else if (Input.GetKeyDown(KeyCode.RightArrow)) MoveChoice(+1);
+                else if (Input.GetKeyDown(KeyCode.Space))
+                {
+                    int selected = currentChoiceIndex;
+                    onSelected?.Invoke(selected);
+                    EndDialog();
+                    onCompleted?.Invoke();
+                }
+            })
+            .AddTo(disposables);
+    }
+
+    private void MoveChoice(int delta)
+    {
+        view.ChoiceTexts[currentChoiceIndex].color = Color.white;
+        currentChoiceIndex = (currentChoiceIndex + delta + view.ChoiceTexts.Count) % view.ChoiceTexts.Count;
+        view.ChoiceTexts[currentChoiceIndex].color = Color.yellow;
+    }
+
+    private void EndDialog()
+    {
+        view.Panel.SetActive(false);
+        view.ChoiceContainer.SetActive(false);
+        GameManager.Instance.UnlockPlayer();
+        isShowing = false;
+        CleanupSubscriptions();
+    }
+
+    private void TypeTextObservable(string message)
+    {
+        view.TextArea.text = "";
+        message.ToCharArray()
+            .Select(chr =>
+                Observable.Defer(() =>
+                    Observable.Return(chr)
+                        .Do(c => view.TextArea.text += c)
+                        .Concat(Observable.Timer(TimeSpan.FromSeconds(charInterval)).Select(_ => default(char)))
+                )
+            )
+            .Concat()
+            .Subscribe(_ => { })
+            .AddTo(disposables);
+    }
+
+    private IObservable<Unit> WaitForKeyDown(KeyCode key)
+    {
+        return Observable.EveryUpdate()
+            .Where(_ => Input.GetKeyDown(key))
+            .Take(1)
+            .AsUnitObservable();
     }
 }

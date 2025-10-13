@@ -19,7 +19,7 @@ public class PlayerTilemapObstacleHandler : MonoBehaviour, IPlayerObstacleHandle
         this.mapData = mapData;
     }
 
-    public async Task<Vector3> CheckObstacle(Vector3 origin, Vector3 target)
+    public Vector3 CheckObstacle(Vector3 origin, Vector3 target)
     {
         // 処理内容の判定のため移動先のセル座標を取得
         Vector3Int cellPos = tilemap.WorldToCell(target);
@@ -29,6 +29,6 @@ public class PlayerTilemapObstacleHandler : MonoBehaviour, IPlayerObstacleHandle
         int y = -(cellPos.y - (rows / 2 - 1));
         if (x < 0 || x >= cols || y < 0 || y >= rows) return origin;
         int cellValue = mapData[y, x];
-        return await processor.ProcessAndReturnPosition(origin, target, cellValue);
+        return processor.ProcessAndReturnPosition(origin, target, cellValue);
     }
 }

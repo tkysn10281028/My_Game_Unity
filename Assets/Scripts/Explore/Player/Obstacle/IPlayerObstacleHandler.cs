@@ -3,5 +3,5 @@ using UnityEngine;
 
 public interface IPlayerObstacleHandler
 {
-    public Task<Vector3> CheckObstacle(Vector3 origin, Vector3 target);
+    public Vector3 CheckObstacle(Vector3 origin, Vector3 target);
 }

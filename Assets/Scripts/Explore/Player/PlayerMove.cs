@@ -22,7 +22,7 @@ namespace Explore.Player
         {
             this.UpdateAsObservable()
                 .Where(_ => !GameManager.Instance.IsPlayerLocked)
-                .Subscribe(async _ =>
+                .Subscribe(_ =>
                 {
                     // プレイヤーのキー入力を受け取り
                     Vector3 moveDirection = inputHandler.GetPlayerMoveVector();
@@ -31,7 +31,7 @@ namespace Explore.Player
                     if (moveDirection == Vector3.zero) return;
                     var origin = transform.position;
                     var distance = moveSpeed * Time.deltaTime;
-                    transform.position = await obstacleHandler.CheckObstacle(origin, origin + moveDirection * distance);
+                    transform.position = obstacleHandler.CheckObstacle(origin, origin + moveDirection * distance);
 
                     // プレイヤーを回転
                     float angle = Mathf.Atan2(moveDirection.y, moveDirection.x) * Mathf.Rad2Deg;

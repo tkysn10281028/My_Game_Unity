@@ -13,17 +13,16 @@ public class StatusDrawer : MonoBehaviour
     [SerializeField] private GameObject registIcon;
     [SerializeField] private GameObject lockIcon;
     [SerializeField] private GameObject virusIcon;
-    [SerializeField] private Transform mapParent;
+    [SerializeField] private Transform parent;
     [SerializeField] private int gridWidth = 3;
     [SerializeField] private int gridHeight = 3;
-    void Awake()
-    {
+    private Transform iconContainer;
 
-    }
     void Start()
     {
-        DrawMap();
-        var oldData = GameManager.Instance.statusObjectList;
+        iconContainer = new GameObject("StatusIcons").transform;
+        iconContainer.SetParent(parent, false);
+        DrawStatus();
         var data = new List<StatusObject>
         {
             new ("lock"),
@@ -33,10 +32,10 @@ public class StatusDrawer : MonoBehaviour
             new ("regist"),
         };
         GameManager.Instance.statusObjectList = data;
-        DrawMapObject();
+        DrawStatusObject();
     }
 
-    private void DrawMap()
+    private void DrawStatus()
     {
         var xAdjustment = 6;
         var yAdjustment = 2;
@@ -49,8 +48,12 @@ public class StatusDrawer : MonoBehaviour
             }
         }
     }
-    public void DrawMapObject()
+    public void DrawStatusObject()
     {
+        foreach (Transform child in iconContainer)
+        {
+            Destroy(child.gameObject);
+        }
         var data = GameManager.Instance.statusObjectList;
         var groupedStatusObject = data.GroupBy(d => d.type);
         foreach (var statusObject in groupedStatusObject)
@@ -75,7 +78,7 @@ public class StatusDrawer : MonoBehaviour
         foreach (var item in data)
         {
             Vector3 basePos = tilemap.CellToWorld(baseVector + new Vector3Int(index, 0) + new Vector3Int(8, 4));
-            Instantiate(icon, basePos - new Vector3(0.5f, 0.5f), Quaternion.identity, mapParent);
+            Instantiate(icon, basePos - new Vector3(0.5f, 0.5f), Quaternion.identity, iconContainer);
             index++;
         }
     }

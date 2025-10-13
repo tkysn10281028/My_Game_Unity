@@ -813,7 +813,7 @@ MonoBehaviour:
   registIcon: {fileID: 3229402654659213163, guid: 5de2a181de0a947c6add29ee8994020f, type: 3}
   lockIcon: {fileID: 3229402654659213163, guid: 2f35a5569e5ec4de992ecf799b10fd63, type: 3}
   virusIcon: {fileID: 3229402654659213163, guid: 467d535ff3e114f5e9ebc877cfee8236, type: 3}
-  mapParent: {fileID: 1275441992}
+  parent: {fileID: 1275441992}
   gridWidth: 3
   gridHeight: 3
 --- !u!1 &1401174726

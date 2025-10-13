@@ -104,15 +104,49 @@ public class DialogSystem : MonoBehaviour
         view.ChoiceContainer.SetActive(true);
 
         TypeTextObservable(message);
+
         view.CreateChoices(choices, view.TextArea.font);
+
+        currentChoiceIndex = -1;
+
+        foreach (var txt in view.ChoiceTexts)
+            txt.color = Color.white;
+        bool canSelect = false;
+
+        Observable.Timer(TimeSpan.FromSeconds(message.Length * charInterval + 0.1f))
+            .Subscribe(_ => canSelect = true)
+            .AddTo(disposables);
 
         Observable.EveryUpdate()
             .Subscribe(_ =>
             {
-                if (Input.GetKeyDown(KeyCode.LeftArrow)) MoveChoice(-1);
-                else if (Input.GetKeyDown(KeyCode.RightArrow)) MoveChoice(+1);
+                if (!canSelect) return;
+
+                if (Input.GetKeyDown(KeyCode.LeftArrow))
+                {
+                    if (currentChoiceIndex == -1)
+                    {
+                        currentChoiceIndex = 0;
+                        view.ChoiceTexts[currentChoiceIndex].color = Color.yellow;
+                        return;
+                    }
+                    MoveChoice(-1);
+                }
+                else if (Input.GetKeyDown(KeyCode.RightArrow))
+                {
+                    if (currentChoiceIndex == -1)
+                    {
+                        currentChoiceIndex = 0;
+                        view.ChoiceTexts[currentChoiceIndex].color = Color.yellow;
+                        return;
+                    }
+                    MoveChoice(+1);
+                }
                 else if (Input.GetKeyDown(KeyCode.Space))
                 {
+                    if (currentChoiceIndex == -1)
+                        return;
+
                     int selected = currentChoiceIndex;
                     onSelected?.Invoke(selected);
                     EndDialog();

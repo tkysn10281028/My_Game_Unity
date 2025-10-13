@@ -1,7 +1,7 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using Boot;
+using Common.Enum;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
@@ -25,11 +25,11 @@ public class StatusDrawer : MonoBehaviour
         DrawStatus();
         var data = new List<StatusObject>
         {
-            new ("lock"),
-            new ("lock"),
-            new ("lock"),
-            new ("virus"),
-            new ("regist"),
+            new (Objects.Lock),
+            new (Objects.Lock),
+            new (Objects.Lock),
+            new (Objects.Virus),
+            new (Objects.Resist),
         };
         GameManager.Instance.statusObjectList = data;
         DrawStatusObject();
@@ -60,13 +60,13 @@ public class StatusDrawer : MonoBehaviour
         {
             switch (statusObject.Key)
             {
-                case "lock":
+                case Objects.Lock:
                     InstantiateStatusObject(lockIcon, new Vector3Int(-1, 0), statusObject.ToList());
                     break;
-                case "virus":
+                case Objects.Virus:
                     InstantiateStatusObject(virusIcon, new Vector3Int(-1, -1), statusObject.ToList());
                     break;
-                case "regist":
+                case Objects.Resist:
                     InstantiateStatusObject(registIcon, new Vector3Int(-1, 1), statusObject.ToList());
                     break;
             }

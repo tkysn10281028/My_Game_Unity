@@ -1,8 +1,10 @@
+using Common.Enum;
+
 public class StatusObject
 {
-    public string type;
+    public Objects type;
 
-    public StatusObject(string type)
+    public StatusObject(Objects type)
     {
         this.type = type;
     }

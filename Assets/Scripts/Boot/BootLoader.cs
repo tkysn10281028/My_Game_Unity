@@ -8,7 +8,6 @@ namespace Boot
     {
         void Start()
         {
-            Debug.Log(Scenes.ExploreScene);
             SceneLoader.Load(Scenes.ExploreScene);
         }
     }

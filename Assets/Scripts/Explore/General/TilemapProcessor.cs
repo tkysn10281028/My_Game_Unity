@@ -5,6 +5,7 @@ using UnityEngine.Tilemaps;
 using UniRx;
 using System;
 using System.Linq;
+using Common.Enum;
 
 public class TilemapProcessor : MonoBehaviour
 {
@@ -40,9 +41,8 @@ public class TilemapProcessor : MonoBehaviour
                 Action showChoicesAction = () =>
                     {
                         DialogSystem.ShowWithChoices(
-                            () => DialogSystem.ShowAsync("行動を終了します."),
                             "行動を選択してください:",
-                            new[] { "通過", "鍵", "ウイルス" },
+                            new[] { "通過", "鍵", "ウイルス", "抗体" },
                             index =>
                             {
                                 switch (index)
@@ -51,12 +51,13 @@ public class TilemapProcessor : MonoBehaviour
                                         Debug.Log("通過");
                                         break;
                                     case 1:
-                                        Debug.Log("鍵");
-                                        RemoveAndRedraw("lock");
+                                        RemoveAndRedrawStatus(Objects.Lock);
                                         break;
                                     case 2:
-                                        Debug.Log("ウイルス");
-                                        RemoveAndRedraw("virus");
+                                        RemoveAndRedrawStatus(Objects.Virus);
+                                        break;
+                                    case 3:
+                                        RemoveAndRedrawStatus(Objects.Resist);
                                         break;
                                     default:
                                         break;
@@ -74,7 +75,27 @@ public class TilemapProcessor : MonoBehaviour
                 return target;
         }
     }
-    private void RemoveAndRedraw(string type)
+
+    private void SetAndRedrawMap(MapObject mapObject)
+    {
+        var list = GameManager.Instance.mapObjectList;
+        var target = list.FirstOrDefault(obj => obj.type == mapObject.type);
+        if (target != null)
+        {
+            target = mapObject;
+        }
+        else
+        {
+            list.Add(mapObject);
+        }
+        var drawer = FindFirstObjectByType<MapDrawer>();
+        if (drawer != null)
+        {
+            drawer.DrawMapObject();
+        }
+    }
+
+    private void RemoveAndRedrawStatus(Objects type)
     {
         var list = GameManager.Instance.statusObjectList;
         var target = list.FirstOrDefault(obj => obj.type == type);

@@ -29,7 +29,6 @@ public class DrawTileMapHandler : MonoBehaviour, IDrawFieldHandler
         string path = Path.Combine(Application.streamingAssetsPath, fileName);
         if (!File.Exists(path))
         {
-            Debug.LogError("CSV file not found : " + fileName);
             return;
         }
         string[] lines = File.ReadAllLines(path);

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Boot;
+using Common.Enum;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
@@ -19,13 +20,13 @@ public class MapDrawer : MonoBehaviour
     [SerializeField] private Transform mapParent;
     [SerializeField] private int gridWidth = 3;
     [SerializeField] private int gridHeight = 3;
-    private Dictionary<string, Action<MapObject>> mapObjectActionMap;
+    private Dictionary<Objects, Action<MapObject>> mapObjectActionMap;
     void Awake()
     {
         mapObjectActionMap = new()
         {
            {
-                "player", obj =>
+                Objects.Player, obj =>
                 {
                     Vector3 basePos = tilemap.CellToWorld(new Vector3Int(obj.x + 8, obj.y -3));
                     if(obj.color == 1)
@@ -35,7 +36,7 @@ public class MapDrawer : MonoBehaviour
                 }
            },
            {
-                "regist", obj =>
+                Objects.Resist, obj =>
                 {
                     GameObject instance = null;
                     Vector3 basePos = tilemap.CellToWorld(new Vector3Int(obj.x + 8, obj.y -3));
@@ -44,7 +45,7 @@ public class MapDrawer : MonoBehaviour
                 }
            },
            {
-                "lock", obj =>
+                Objects.Lock, obj =>
                 {
                     GameObject instance = null;
                     Vector3 basePos = tilemap.CellToWorld(new Vector3Int(obj.x + 8, obj.y -3));
@@ -56,7 +57,7 @@ public class MapDrawer : MonoBehaviour
                 }
            },
            {
-                "ownership", obj =>
+                Objects.Ownership, obj =>
                 {
                     var xAdjustment = 7;
                     var yAdjustment = -4;
@@ -68,7 +69,7 @@ public class MapDrawer : MonoBehaviour
                 }
            },
            {
-                "virus", obj =>
+                Objects.Virus, obj =>
                 {
                     GameObject instance = null;
                     Vector3 basePos = tilemap.CellToWorld(new Vector3Int(obj.x + 8, obj.y -3));
@@ -87,11 +88,11 @@ public class MapDrawer : MonoBehaviour
         // TODO: ここでJson文字列をサーバーから受け取るイメージ
         var data = new List<MapObject>
         {
-            new(0, 0, 1, "player", true),
-            new(1, 1, 1, "regist", true),
-            new(0, 0, 1, "lock", true),
-            new(1, 0, 1, "ownership", true),
-            new(0, 0, 1, "virus", false),
+            new(0, 0, 1, Objects.Player, true),
+            new(1, 1, 1, Objects.Resist, true),
+            new(0, 0, 1, Objects.Lock, true),
+            new(1, 0, 1, Objects.Ownership, true),
+            new(0, 0, 1, Objects.Virus, false),
         };
         GameManager.Instance.mapObjectList = data;
         DrawMapObject();
